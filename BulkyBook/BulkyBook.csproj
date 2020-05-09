@@ -21,9 +21,4 @@
     <ProjectReference Include="..\BulkyBook.Uility\BulkyBook.Uility.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Controllers\" />
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
 </Project>
