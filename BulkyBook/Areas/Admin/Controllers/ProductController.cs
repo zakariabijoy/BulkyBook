@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BulkyBook.DataAccess.Repository.IRepository;
@@ -57,30 +58,71 @@ namespace BulkyBook.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return View(productVM.Product);
+            return View(productVM);
         }
 
         [HttpPost]
         [AutoValidateAntiforgeryToken]
-        public IActionResult Upsert(Product product)
+        public IActionResult Upsert(ProductVM productVm)
         {
             if (ModelState.IsValid)
             {
-                if (product.Id == 0)
+                var webRootPath = _hostEnvironment.WebRootPath;
+                var files = HttpContext.Request.Form.Files;
+
+                if (files.Count > 0)
                 {
-                    _UnitOfWork.Product.Add(product);
+                    string fileName = Guid.NewGuid().ToString();
+                    var uploads = Path.Combine(webRootPath, @"images\products");
+                    var extension = Path.GetExtension(files[0].FileName);
+
+                    if (productVm.Product.ImageUrl != null)
+                    {
+                        //this is an edit and we need to remove old image
+                        var imagepath = Path.Combine(webRootPath, productVm.Product.ImageUrl.TrimStart('\\'));
+                        if (System.IO.File.Exists(imagepath))
+                        {
+                            System.IO.File.Delete(imagepath);
+                        }
+                    }
+
+                    using (var fileStream =new FileStream(Path.Combine(uploads,fileName+extension),FileMode.Create))
+                    {
+                        files[0].CopyTo(fileStream);
+                    }
+
+                    productVm.Product.ImageUrl = @"\images\products\" + fileName + extension;
                 }
                 else
                 {
-                    _UnitOfWork.Product.Update(product);
+                    // update when they do not change the image
+                    if (productVm.Product.Id != 0)
+                    {
+                        Product objFromDb = _UnitOfWork.Product.Get(productVm.Product.Id);
+                        productVm.Product.ImageUrl = objFromDb.ImageUrl;
+                    }
+
+                    
+                }
+                
+                
+                if (productVm.Product.Id == 0)
+                {
+                    _UnitOfWork.Product.Add(productVm.Product);
+                }
+                else
+                {
+                    _UnitOfWork.Product.Update(productVm.Product);
                 }
 
                 _UnitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(product);
+            return View(productVm);
         }
+
+
 
         #region Api Calls
 
