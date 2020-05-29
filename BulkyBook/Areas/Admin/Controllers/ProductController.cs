@@ -15,12 +15,12 @@ namespace BulkyBook.Areas.Admin.Controllers
     [Area("Admin")]
     public class ProductController : Controller
     {
-        private readonly IUnitOfWork _UnitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _hostEnvironment;
 
         public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment hostEnvironment)
         {
-            _UnitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
             _hostEnvironment = hostEnvironment;
         }
         public IActionResult Index()
@@ -33,12 +33,12 @@ namespace BulkyBook.Areas.Admin.Controllers
             var  productVM = new ProductVM()
             {
                 Product = new Product(),
-                CategorieList = _UnitOfWork.Category.GetAll().Select(c=> new SelectListItem
+                CategorieList = _unitOfWork.Category.GetAll().Select(c=> new SelectListItem
                 {
                     Text = c.Name,
                     Value = c.Id.ToString()
                 }),
-                CoverTypesList = _UnitOfWork.CoverType.GetAll().Select(c=> new SelectListItem
+                CoverTypesList = _unitOfWork.CoverType.GetAll().Select(c=> new SelectListItem
                 {
                     Text = c.Name,
                     Value = c.Id.ToString()
@@ -51,7 +51,7 @@ namespace BulkyBook.Areas.Admin.Controllers
                 return View(productVM);
             }
 
-            productVM.Product = _UnitOfWork.Product.Get(id.GetValueOrDefault());
+            productVM.Product = _unitOfWork.Product.Get(id.GetValueOrDefault());
 
             if (productVM.Product == null)
             {
@@ -98,7 +98,7 @@ namespace BulkyBook.Areas.Admin.Controllers
                     // update when they do not change the image
                     if (productVm.Product.Id != 0)
                     {
-                        Product objFromDb = _UnitOfWork.Product.Get(productVm.Product.Id);
+                        Product objFromDb = _unitOfWork.Product.Get(productVm.Product.Id);
                         productVm.Product.ImageUrl = objFromDb.ImageUrl;
                     }
 
@@ -108,16 +108,32 @@ namespace BulkyBook.Areas.Admin.Controllers
                 
                 if (productVm.Product.Id == 0)
                 {
-                    _UnitOfWork.Product.Add(productVm.Product);
+                    _unitOfWork.Product.Add(productVm.Product);
                 }
                 else
                 {
-                    _UnitOfWork.Product.Update(productVm.Product);
+                    _unitOfWork.Product.Update(productVm.Product);
                 }
 
-                _UnitOfWork.Save();
+                _unitOfWork.Save();
                 return RedirectToAction(nameof(Index));
             }
+
+            productVm.CategorieList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            productVm.CoverTypesList = _unitOfWork.CoverType.GetAll().Select(i => new SelectListItem
+            {
+                Text = i.Name,
+                Value = i.Id.ToString()
+            });
+            if (productVm.Product.Id != 0)
+            {
+                productVm.Product = _unitOfWork.Product.Get(productVm.Product.Id);
+            }
+
 
             return View(productVm);
         }
@@ -130,21 +146,28 @@ namespace BulkyBook.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var products = _UnitOfWork.Product.GetAll(includeProperties:"Category,CoverType");
+            var products = _unitOfWork.Product.GetAll(includeProperties:"Category,CoverType");
             return Json(new {data= products });
         }
 
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            var product = _UnitOfWork.Product.Get(id);
+            var product = _unitOfWork.Product.Get(id);
             if (product == null)
             {
                 return Json(new {success = false, message = "Error while dealing"});
             }
 
-            _UnitOfWork.Product.Remove(product);
-            _UnitOfWork.Save();
+            var webRootPath = _hostEnvironment.WebRootPath;
+            var imagepath = Path.Combine(webRootPath, product.ImageUrl.TrimStart('\\'));
+            if (System.IO.File.Exists(imagepath))
+            {
+                System.IO.File.Delete(imagepath);
+            }
+
+            _unitOfWork.Product.Remove(product);
+            _unitOfWork.Save();
             return Json(new { success = true, message = "Successfully Deleted" });
         }
 
