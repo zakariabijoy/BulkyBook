@@ -33,7 +33,7 @@ namespace BulkyBook.Areas.Admin.Controllers
             var  productVM = new ProductVM()
             {
                 Product = new Product(),
-                CategorieList = _unitOfWork.Category.GetAll().Select(c=> new SelectListItem
+                CategoryList = _unitOfWork.Category.GetAll().Select(c=> new SelectListItem
                 {
                     Text = c.Name,
                     Value = c.Id.ToString()
@@ -119,7 +119,7 @@ namespace BulkyBook.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            productVm.CategorieList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
+            productVm.CategoryList = _unitOfWork.Category.GetAll().Select(i => new SelectListItem
             {
                 Text = i.Name,
                 Value = i.Id.ToString()

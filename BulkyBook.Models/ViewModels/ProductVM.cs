@@ -8,7 +8,7 @@ namespace BulkyBook.Models.ViewModels
     public class ProductVM
     {
         public Product Product { get; set; }
-        public  IEnumerable<SelectListItem> CategorieList{ get; set; }
+        public  IEnumerable<SelectListItem> CategoryList{ get; set; }
         public  IEnumerable<SelectListItem> CoverTypesList {get; set; }
        
     }
