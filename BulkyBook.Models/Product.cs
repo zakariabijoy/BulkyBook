@@ -29,7 +29,7 @@ namespace BulkyBook.Models
         public double Price100 { get; set; }
         public string ImageUrl { get; set; }
 
-        // navigation property
+        // navigation property or relationship making properties
 
         [Required]
         public int CategoryId { get; set; }
