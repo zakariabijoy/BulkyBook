@@ -33,7 +33,7 @@ function loadDataTable() {
 
 function Delete(url) {
     swal({
-        title: "Are you sure you want to delete this category?",
+        title: "Are you sure you want to delete?",
         text: "You will not be able to restore the data!",
         icon: "warning",
         buttons: true,
