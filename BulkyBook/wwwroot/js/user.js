@@ -27,7 +27,7 @@ function loadDataTable() {
                         return `
                             <div class="text-center">
                                 
-                                <a onClick=LockUnlock("${data.id}") class="btn btn-danger text-white" style="cursor:pointer">
+                                <a onClick=LockUnlock("${data.id}") class="btn btn-danger text-white" style="cursor:pointer; width:100px;">
                                     <i class="fas fa-lock-open mr-1"></i> Unlock
                                 </a>
                             </div>
@@ -38,7 +38,7 @@ function loadDataTable() {
                         return `
                             <div class="text-center">
                                 
-                                <a onClick=LockUnlock("${data.id}") class="btn btn-success text-white" style="cursor:pointer">
+                                <a onClick=LockUnlock("${data.id}") class="btn btn-success text-white" style="cursor:pointer; width:100px;">
                                     <i class="fas fa-lock"></i> Lock
                                 </a>
                             </div>
@@ -56,7 +56,7 @@ function LockUnlock(id) {
     $.ajax({
         type: "Post",
         url: '/Admin/User/LockUnlock',
-        data: json.strategy(id),
+        data: JSON.stringify(id),
         contentType: "application/json",
 
         success: function (data) {
