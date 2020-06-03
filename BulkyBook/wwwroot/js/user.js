@@ -51,3 +51,21 @@ function loadDataTable() {
     });
 }
 
+function LockUnlock(id) {
+
+    $.ajax({
+        type: "Post",
+        url: '/Admin/User/LockUnlock',
+        data: json.strategy(id),
+        contentType: "application/json",
+
+        success: function (data) {
+            if (data.success) {
+                toastr.success(data.message);
+                dataTable.ajax.reload();
+            } else {
+                toastr.error(data.message);
+            }
+        }
+    });
+}
