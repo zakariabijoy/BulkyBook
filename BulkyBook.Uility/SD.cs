@@ -16,5 +16,8 @@ namespace BulkyBook.Uility
         public const string Role_User_Comp = "Company Customer";
         public const string Role_Admin = "Admin";
         public const string Role_Employee = "Employee";
+
+
+        public const string Session_ShoppingCart = "ShoppingCart Session";
     }
 }

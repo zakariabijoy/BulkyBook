@@ -6,7 +6,9 @@ using BulkyBook.DataAccess.Repository;
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
+using BulkyBook.Uility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -76,6 +78,11 @@ namespace BulkyBook.Areas.Customer.Controllers
                 }
 
                 _unitOfWork.Save();
+
+                var count = _unitOfWork.ShoppingCart.GetAll(s => s.ApplicationUserId == shoppingCart.ApplicationUserId)
+                    .ToList().Count();
+                // HttpContext.Session.SetObject(SD.Session_ShoppingCart, shoppingCartFromDb);     // we can store an object into session by using SetObject (session extension method)
+                HttpContext.Session.SetInt32(SD.Session_ShoppingCart, count);
 
                 return RedirectToAction("Index");
 
