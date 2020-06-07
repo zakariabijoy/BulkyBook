@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using BulkyBook.DataAccess.Data;
 using BulkyBook.DataAccess.Repository;
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Models;
 using BulkyBook.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -42,6 +44,58 @@ namespace BulkyBook.Areas.Customer.Controllers
             };
             return View(cart);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Details(ShoppingCart shoppingCart)
+        {
+            shoppingCart.Id = 0;
+            
+            if (ModelState.IsValid)
+            {
+                //then we will add to cart
+                var claimsIdentity = (ClaimsIdentity) User.Identity;
+                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+                shoppingCart.ApplicationUserId = claim.Value;
+
+                var shoppingCartFromDb = _unitOfWork.ShoppingCart
+                    .GetFirstOrDefault(
+                        s => s.ApplicationUserId == shoppingCart.ApplicationUserId &&
+                             s.ProductId == shoppingCart.ProductId, includeProperties: "Product");
+                if (shoppingCartFromDb == null)
+                {
+                    //no records exists in database for that product for that user, so we create new data 
+                    _unitOfWork.ShoppingCart.Add(shoppingCart);
+                }
+                else
+                {
+                    shoppingCartFromDb.Count += shoppingCart.Count;
+
+                   // _unitOfWork.ShoppingCart.Update(shoppingCartFromDb);
+                }
+
+                _unitOfWork.Save();
+
+                return RedirectToAction("Index");
+
+            }
+            else
+            {
+                var product = _unitOfWork.Product.GetFirstOrDefault(p => p.Id == shoppingCart.ProductId, includeProperties: "Category,CoverType");
+
+                var cart = new ShoppingCart()
+                {
+                    Product = product,
+                    ProductId = product.Id
+                };
+
+                return View(cart);
+            }
+            
+            
+        }
+
 
         public IActionResult Privacy()
         {
