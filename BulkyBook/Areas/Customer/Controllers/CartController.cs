@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBook.Areas.Customer.Controllers
 {
+    [Area("Customer")]
     public class CartController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
