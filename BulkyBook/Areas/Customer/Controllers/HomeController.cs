@@ -32,6 +32,18 @@ namespace BulkyBook.Areas.Customer.Controllers
         public IActionResult Index()
         {
             var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim != null)
+            {
+                var count = _unitOfWork.ShoppingCart
+                    .GetAll(s => s.ApplicationUserId == claim.Value)
+                    .ToList().Count();
+               
+                HttpContext.Session.SetInt32(SD.Session_ShoppingCart, count);
+            }
+
             return View(productList);
         }
 
