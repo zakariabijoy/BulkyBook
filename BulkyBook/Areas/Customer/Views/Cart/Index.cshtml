@@ -40,20 +40,20 @@
                                     </div>
                                     <div class="col-6 col-sm-4 col-lg-6">
                                         <div class="float-right mx-1">
-                                            <button type="submit" class="btn btn-primary">
+                                            <a asp-action="Plus" asp-route-cartId ="@shoppingCart.Id" class="btn btn-primary">
                                                 <i class="fas fa-plus"></i>
-                                            </button>
+                                            </a>
                                         </div>
                                         <div class="float-right mx-1">
-                                            <button type="submit" class="btn btn-danger">
+                                            <a asp-action="Minus" asp-route-cartId ="@shoppingCart.Id" class="btn btn-danger">
                                                 <i class="fas fa-minus"></i>
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                     <div class="col-2 col-sm-4 col-lg-2 text-right">
-                                        <button type="submit" class="btn btn-outline-danger">
+                                        <a asp-action="Remove" asp-route-cartId ="@shoppingCart.Id" class="btn btn-outline-danger">
                                             <i class="fas fa-trash"></i>
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
