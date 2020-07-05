@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Stripe;
 
 namespace BulkyBook.Areas.Customer.Controllers
 {
@@ -193,7 +194,7 @@ namespace BulkyBook.Areas.Customer.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Summary")]
-        public IActionResult SummaryPost()
+        public IActionResult SummaryPost( string stripeToken)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -228,13 +229,53 @@ namespace BulkyBook.Areas.Customer.Controllers
                 ShoppingCartVm.OrderHeader.OrderTotal += orderDetails.Count * orderDetails.Price;
                 _unitOfWork.OrderDetails.Add(orderDetails);
 
-                _unitOfWork.Save();
             }
 
             _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVm.ShoppingCarts);
             _unitOfWork.Save();
 
             HttpContext.Session.SetInt32(SD.Session_ShoppingCart, 0);
+
+            if (stripeToken == null)
+            {
+
+            }
+            else
+            {
+                // process the payment
+
+                var option = new ChargeCreateOptions()
+                {
+                    Amount = Convert.ToInt32(ShoppingCartVm.OrderHeader.OrderTotal * 100),
+                    Currency = "usd",
+                    Description = "Order Id :" + ShoppingCartVm.OrderHeader.Id,
+                    Source = stripeToken
+
+                };
+
+                var service = new ChargeService();
+
+                Charge charge = service.Create(option);
+
+                if (charge.BalanceTransactionId == null)
+                {
+                    ShoppingCartVm.OrderHeader.PaymentStatus = SD.PaymentStatusRejected;
+                }
+                else
+                {
+                    ShoppingCartVm.OrderHeader.TransactionId = charge.BalanceTransactionId;
+                }
+
+                if (charge.Status.ToLower() == "succeeded")
+                {
+                    ShoppingCartVm.OrderHeader.PaymentStatus = SD.PaymentStatusApproved;
+                    ShoppingCartVm.OrderHeader.OderStatus = SD.OrderStatusApproved;
+                    ShoppingCartVm.OrderHeader.PaymentDate = DateTime.Now;
+
+                }
+            }
+
+            _unitOfWork.Save();
 
             return RedirectToAction("OrderConfirmation", "Cart", new {id = ShoppingCartVm.OrderHeader.Id});
         }
