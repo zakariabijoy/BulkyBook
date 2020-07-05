@@ -32,7 +32,7 @@
                                         <label>Name</label>
                                     </div>
                                     <div class="col-9">
-                                        <input type="text" class="form-control"  asp-for="OrderHeader.Name"/>
+                                        <input type="text" class="form-control" asp-for="OrderHeader.Name" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -40,7 +40,7 @@
                                         <label>Phone</label>
                                     </div>
                                     <div class="col-9">
-                                        <input type="text" class="form-control"  asp-for="OrderHeader.PhoneNumber"/>
+                                        <input type="text" class="form-control" asp-for="OrderHeader.PhoneNumber" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -48,7 +48,7 @@
                                         <label>Street Address</label>
                                     </div>
                                     <div class="col-9">
-                                        <input type="text" class="form-control"  asp-for="OrderHeader.StreetAddress" />
+                                        <input type="text" class="form-control" asp-for="OrderHeader.StreetAddress" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -56,7 +56,7 @@
                                         <label>City</label>
                                     </div>
                                     <div class="col-9">
-                                        <input type="text" class="form-control"  asp-for="OrderHeader.City" />
+                                        <input type="text" class="form-control" asp-for="OrderHeader.City" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -64,7 +64,7 @@
                                         <label>State</label>
                                     </div>
                                     <div class="col-9">
-                                        <input type="text" class="form-control"  asp-for="OrderHeader.State"/>
+                                        <input type="text" class="form-control" asp-for="OrderHeader.State" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
@@ -72,7 +72,7 @@
                                         <label>Postal Code</label>
                                     </div>
                                     <div class="col-9">
-                                        <input type="text" class="form-control"  asp-for="OrderHeader.PostalCode" />
+                                        <input type="text" class="form-control" asp-for="OrderHeader.PostalCode" />
                                     </div>
                                 </div>
                             </div>
@@ -83,8 +83,8 @@
                                 <ul class="list-group mb-3">
                                     @foreach (var details in Model.ShoppingCarts)
                                     {
-                                        
-                                    
+
+
                                         <li class="list-group-item d-flex justify-content-between">
                                             <div>
                                                 <h6 class="my-0"> @details.Product.Title </h6>
@@ -113,7 +113,8 @@
                                 var OrderTotalForStripe = Model.OrderHeader.OrderTotal * 100;
 
                             }
-                            <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+
+                            @*<script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                                     data-key="@Stripe.Value.Publishablekey"
                                     data-amount="@OrderTotalForStripe"
                                     data-name="Bulky Book"
@@ -125,7 +126,7 @@
                             </script>
                             <script>
                                 document.getElementsByClassName("stripe-button-el")[0].style.display = 'none';
-                            </script>
+                            </script>*@
 
                             <button type="submit" value="Place Order" class="btn btn-success form-control">Place Order</button>
                         </div>

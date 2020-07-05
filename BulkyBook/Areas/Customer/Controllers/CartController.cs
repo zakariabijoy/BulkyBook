@@ -24,6 +24,7 @@ namespace BulkyBook.Areas.Customer.Controllers
         private readonly IEmailSender _emailSender;
         private readonly UserManager<IdentityUser> _userManager;
 
+        [BindProperty]
         public ShoppingCartVM ShoppingCartVm { get; set; }
 
         public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender, UserManager<IdentityUser> userManager)
@@ -214,6 +215,8 @@ namespace BulkyBook.Areas.Customer.Controllers
 
             foreach (var item in ShoppingCartVm.ShoppingCarts)
             {
+                item.Price = SD.GetPriceBasedOnQuatity(item.Count, item.Product.Price, item.Product.Price50,
+                                                                                            item.Product.Price100);
                 OrderDetails orderDetails = new OrderDetails()
                 {
                     ProductId =item.ProductId,
@@ -229,9 +232,16 @@ namespace BulkyBook.Areas.Customer.Controllers
             }
 
             _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVm.ShoppingCarts);
+            _unitOfWork.Save();
+
             HttpContext.Session.SetInt32(SD.Session_ShoppingCart, 0);
 
             return RedirectToAction("OrderConfirmation", "Cart", new {id = ShoppingCartVm.OrderHeader.Id});
+        }
+
+        public IActionResult OrderConfirmation(int id)
+        {
+            return View(id);
         }
     }
 }
