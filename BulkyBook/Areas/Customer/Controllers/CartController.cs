@@ -189,5 +189,49 @@ namespace BulkyBook.Areas.Customer.Controllers
 
             return View(ShoppingCartVm);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Summary")]
+        public IActionResult SummaryPost()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            ShoppingCartVm.OrderHeader.ApplicationUser =
+                _unitOfWork.ApplicationUser.GetFirstOrDefault(c => c.Id == claim.Value, includeProperties:"Company");
+
+            ShoppingCartVm.ShoppingCarts = _unitOfWork.ShoppingCart.GetAll(s => s.ApplicationUserId == claim.Value, includeProperties:"Product");
+
+            ShoppingCartVm.OrderHeader.OderStatus = SD.OrderStatusPending;
+            ShoppingCartVm.OrderHeader.PaymentStatus = SD.PaymentStatusPending;
+            ShoppingCartVm.OrderHeader.ApplicationUserId = claim.Value;
+            ShoppingCartVm.OrderHeader.OrderDate = DateTime.Now;
+
+            _unitOfWork.OrderHeader.Add(ShoppingCartVm.OrderHeader);
+            _unitOfWork.Save();
+
+            List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+
+            foreach (var item in ShoppingCartVm.ShoppingCarts)
+            {
+                OrderDetails orderDetails = new OrderDetails()
+                {
+                    ProductId =item.ProductId,
+                    OrderId = ShoppingCartVm.OrderHeader.Id,
+                    Count = item.Count,
+                    Price = item.Price
+                };
+
+                ShoppingCartVm.OrderHeader.OrderTotal += orderDetails.Count * orderDetails.Price;
+                _unitOfWork.OrderDetails.Add(orderDetails);
+
+                _unitOfWork.Save();
+            }
+
+            _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVm.ShoppingCarts);
+            HttpContext.Session.SetInt32(SD.Session_ShoppingCart, 0);
+
+            return RedirectToAction("OrderConfirmation", "Cart", new {id = ShoppingCartVm.OrderHeader.Id});
+        }
     }
 }
