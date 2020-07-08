@@ -1,6 +1,7 @@
 ﻿@model BulkyBook.Models.ViewModels.OrderDetailsVM
 
 @using BulkyBook.Uility
+@using BulkyBook.Models
 
 
 <form method="post">
@@ -197,25 +198,30 @@
                                 <span class="text-primary">Order Summary</span>
                             </h4>
                             <ul class="list-group mb-3">
-                                <li class="list-group-item d-flex justify-content-between">
-                                    <div class="row container">
-                                        <div class="col-8">
-                                            <h6 class="my-0">--Product.Title--</h6>
-                                            <small class="text-muted">Price : --Price--</small>
-                                            <small class="text-muted">Quantity : --Count--</small>
+                                @foreach (var orderDetails in Model.OrderDetailsList)
+                                {
+
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <div class="row container">
+                                            <div class="col-8">
+                                                <input type="hidden" asp-for="@orderDetails.Id"/>
+                                                <h6 class="my-0 text-primary">@orderDetails.Product.Title</h6>
+                                                <small class="text-muted">Price : @orderDetails.Price</small><br />
+                                                <small class="text-muted">Quantity : @orderDetails.Count</small>
+                                            </div>
+                                            <div class="col-4">
+                                                <p class="text-success">@(String.Format("{0:C}", orderDetails.Count* orderDetails.Price))</p>
+                                            </div>
                                         </div>
-                                        <div class="col-4">
-                                            <h5 class="text-success">--price*count--</h5>
-                                        </div>
-                                    </div>
-                                </li>
+                                    </li>
+                                }
                                 <li class="list-group-item bg-info">
                                     <div class="row container">
                                         <div class="col-6">
                                             <h5 class="text-white">TOTAL </h5>
                                         </div>
                                         <div class="col-6 text-right">
-                                            <h5 class="text-white">--GRAND TOTAL-</h5>
+                                            <h5 class="text-white">@(String.Format("{0:C}", Model.OrderHeader.OrderTotal))</h5>
                                         </div>
                                     </div>
                                 </li>
