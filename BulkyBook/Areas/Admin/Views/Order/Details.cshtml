@@ -3,6 +3,9 @@
 @using BulkyBook.Uility
 @using BulkyBook.Models
 
+@using Microsoft.Extensions.Options
+@inject IOptions<StripeSettings> Stripe
+
 
 <form method="post">
     <input hidden asp-for="OrderHeader.Id" />
@@ -204,7 +207,7 @@
                                     <li class="list-group-item d-flex justify-content-between">
                                         <div class="row container">
                                             <div class="col-8">
-                                                <input type="hidden" asp-for="@orderDetails.Id"/>
+                                                <input type="hidden" asp-for="@orderDetails.Id" />
                                                 <h6 class="my-0 text-primary">@orderDetails.Product.Title</h6>
                                                 <small class="text-muted">Price : @orderDetails.Price</small><br />
                                                 <small class="text-muted">Quantity : @orderDetails.Count</small>
@@ -226,8 +229,8 @@
                                     </div>
                                 </li>
                             </ul>
-                            
-                            @if(User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+
+                            @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
                             {
                                 <br />
                                 @if (Model.OrderHeader.OderStatus == SD.OrderStatusApproved)
@@ -238,15 +241,39 @@
                                 @if (Model.OrderHeader.OderStatus == SD.OrderStatusInProcess)
                                 {
                                     <input type="submit" value="Ship Order" onclick="return validateInput()"
-                                           class="btn btn-primary form-control" 
-                                           formaction="/Admin/Order/ShipOrder" formmethod="post"/>
+                                           class="btn btn-primary form-control"
+                                           formaction="/Admin/Order/ShipOrder" formmethod="post" />
                                 }
                             }
                             else
                             {
                                 <label class="btn btn-primary form-control">@Model.OrderHeader.OderStatus</label>
                             }
-                            
+
+                            @{
+                                var OrderTotalForStripe = Model.OrderHeader.OrderTotal * 100;
+
+                            }
+
+                            @if (Model.OrderHeader.PaymentStatus == SD.PaymentStatusDelayedPayment && Model.OrderHeader.OderStatus == SD.OrderStatusShipped)
+                            {
+                                <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                                        data-key="@Stripe.Value.Publishablekey"
+                                        data-amount="@OrderTotalForStripe"
+                                        data-name="Bulky Book"
+                                        data-label="Place Order"
+                                        data-description="Get Books, For Less"
+                                        data-locale="auto"
+                                        data-allow-remember-me="false"
+                                        data-image="https://stripe.com/img/documentation/checkout/marketplace.png">
+                                </script>
+                                <script>
+                                    document.getElementsByClassName("stripe-button-el")[0].style.display = 'none';
+                                </script>
+
+                                <button type="submit" value="Place Order" class="btn btn-success form-control">Pay Now</button>
+                            }
+
                             @if (Model.OrderHeader.OderStatus != SD.OrderStatusRefunded && Model.OrderHeader.OderStatus != SD.OrderStatusCancelled && (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee)))
                             {
                                 <div class="pt-2">
@@ -283,7 +310,7 @@
         }
 
 
-        $(document).ready(function() {
+        $(document).ready(function () {
             var shippingDate = document.getElementById("shippingDate");
 
             if (shippingDate.value == '1/1/0001') {
@@ -292,7 +319,7 @@
 
             var paymentDate = document.getElementById("paymentDate");
 
-            if (paymentDate.value == '1/1/0001' ) {
+            if (paymentDate.value == '1/1/0001') {
                 paymentDate.value = '';
             }
         });
