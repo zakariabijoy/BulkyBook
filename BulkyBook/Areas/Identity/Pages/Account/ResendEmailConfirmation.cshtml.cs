@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.WebUtilities;
 namespace BulkyBook.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
-    public abstract class ResendEmailConfirmationModel : PageModel
+    public  class ResendEmailConfirmationModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
