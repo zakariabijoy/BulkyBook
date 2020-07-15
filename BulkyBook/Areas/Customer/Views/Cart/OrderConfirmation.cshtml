@@ -1,14 +1,23 @@
 ﻿@model int
 <div class="container row">
+    @if (ViewBag.Message != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show col-12 text-center" role="alert">
+            <strong>Alert!</strong> @ViewBag.Message
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
     <div class="col-12 text-center">
-        <h1 class="text-primary text-center">Order Submitted Successfully</h1><br />
-        <img src="~/images/lawn_leaf.jpg" width="50%" />
+        <h1 class="text-primary text-center">Order Submitted Successfully</h1><br/>
+        <img src="~/images/lawn_leaf.jpg" width="50%"/>
     </div>
-    <div class="col-12 text-center" style="color:maroon">
-        <br />
-        Thank you for your order! <br />
+    <div class="col-12 text-center" style="color: maroon">
+        <br/>
+        Thank you for your order! <br/>
         We have received your order and we will send a follow up email shortly!
-        <br />
+        <br/>
         Your Order Number is : @Model
     </div>
 </div>
