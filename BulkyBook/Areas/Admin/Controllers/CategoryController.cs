@@ -25,7 +25,7 @@ namespace BulkyBook.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Upsert(int? id)
+        public async Task<IActionResult> Upsert(int? id)
         {
             var  category = new Category();
             if (id == null)
@@ -35,7 +35,7 @@ namespace BulkyBook.Areas.Admin.Controllers
                 return View(category);
             }
 
-            category = _UnitOfWork.Category.Get(id.GetValueOrDefault());
+            category = await _UnitOfWork.Category.GetAsync(id.GetValueOrDefault());
 
             if (category == null)
             {
@@ -47,17 +47,17 @@ namespace BulkyBook.Areas.Admin.Controllers
 
         [HttpPost]
         [AutoValidateAntiforgeryToken]
-        public IActionResult Upsert(Category category)
+        public async Task<IActionResult> Upsert(Category category)
         {
             if (ModelState.IsValid)
             {
                 if (category.Id == 0)
                 {
-                    _UnitOfWork.Category.Add(category);
+                    await _UnitOfWork.Category.AddAsync(category);
                 }
                 else
                 {
-                    _UnitOfWork.Category.Update(category);
+                   await _UnitOfWork.Category.UpdateAsync(category);
                 }
 
                 _UnitOfWork.Save();
@@ -71,22 +71,22 @@ namespace BulkyBook.Areas.Admin.Controllers
 
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var categories = _UnitOfWork.Category.GetAll();
+            var categories = await _UnitOfWork.Category.GetAllAsync();
             return Json(new {data= categories});
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var category = _UnitOfWork.Category.Get(id);
+            var category = await _UnitOfWork.Category.GetAsync(id);
             if (category == null)
             {
                 return Json(new {success = false, message = "Error while dealing"});
             }
 
-            _UnitOfWork.Category.Remove(category);
+            await _UnitOfWork.Category.RemoveAsync(category);
             _UnitOfWork.Save();
             return Json(new { success = true, message = "Successfully Deleted" });
         }
