@@ -1,4 +1,4 @@
-﻿
+﻿@model BulkyBook.Models.ViewModels.CategoryVm
 @{
     ViewData["Title"] = "Index";
 }
@@ -26,27 +26,70 @@
 
 <br />
 
-@*<div class="p-4 border rounded">
+<div class="p-4 border rounded">
+    @if (Model.Categories.Count() > 0)
+    {
+        <table class="table table-striped border">
+            <tr class="table-secondary">
+                <th>
+                    Catgeory Name
+                </th>
+                <th></th>
+            </tr>
+            @foreach(var item in Model.Categories)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => item.Name)
+                    </td>
+                    <td>
+                        <div class="text-center">
+                            <a href="/Admin/Category/Upsert/@item.Id" class="btn btn-success text-white"
+                               style="cursor:pointer">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            &nbsp;
+                            <button onclick=Delete("/Admin/Category/Delete/@item.Id") 
+                                    class="btn btn-danger text-white" style="cursor:pointer">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+        <div page-model="@Model.PagingInfo" page-classes-enabled="true" page-class="btn border"
+             page-class-normal="btn btn-light" page-class-selected="btn btn-info active" 
+             class="btn-group float-right"></div>
+        <br />
+    }
+    else
+    {
+        <p> No Categories Exists.</p>
+    }
+</div>
 
-    <table id="tblData" class="table table-striped table-bordered" style="width:100%">
+    @*<div class="p-4 border rounded">
 
-        <thead class="thead-dark">
+            <table id="tblData" class="table table-striped table-bordered" style="width:100%">
 
-        <tr class="table-info">
+                <thead class="thead-dark">
 
-            <th>Name</th>
+                <tr class="table-info">
 
-            <th></th>
+                    <th>Name</th>
 
-        </tr>
+                    <th></th>
 
-        </thead>
+                </tr>
 
-    </table>
+                </thead>
 
-</div>  
+            </table>
 
-@section Scripts{
+        </div>
 
-    <script src="~/js/category.js"></script>
-}*@
+        @section Scripts{
+
+            <script src="~/js/category.js"></script>
+        }*@
