@@ -13,6 +13,7 @@ using BulkyBook.DataAccess.Repository;
 using BulkyBook.DataAccess.Repository.IRepository;
 using BulkyBook.Uility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -39,6 +40,7 @@ namespace BulkyBook
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddSingleton<ITempDataProvider,CookieTempDataProvider>();
             services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
             services.Configure<TwilioSettings>(Configuration.GetSection("Twilio"));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
