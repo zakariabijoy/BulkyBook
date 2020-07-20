@@ -145,6 +145,29 @@ namespace BulkyBook.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult UpdateOrderDetails()
+        {
+            var orderHEaderFromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == OrderDetailsVm.OrderHeader.Id);
+            orderHEaderFromDb.Name = OrderDetailsVm.OrderHeader.Name;
+            orderHEaderFromDb.PhoneNumber = OrderDetailsVm.OrderHeader.PhoneNumber;
+            orderHEaderFromDb.StreetAddress = OrderDetailsVm.OrderHeader.StreetAddress;
+            orderHEaderFromDb.City = OrderDetailsVm.OrderHeader.City;
+            orderHEaderFromDb.State = OrderDetailsVm.OrderHeader.State;
+            orderHEaderFromDb.PostalCode = OrderDetailsVm.OrderHeader.PostalCode;
+            if (OrderDetailsVm.OrderHeader.Carrier != null)
+            {
+                orderHEaderFromDb.Carrier = OrderDetailsVm.OrderHeader.Carrier;
+            }
+            if (OrderDetailsVm.OrderHeader.TrackingNumber != null)
+            {
+                orderHEaderFromDb.TrackingNumber = OrderDetailsVm.OrderHeader.TrackingNumber;
+            }
+
+            _unitOfWork.Save();
+            TempData["Error"] = "Order Details Updated Successfully.";
+            return RedirectToAction("Details", "Order", new { id = orderHEaderFromDb.Id });
+        }
+
 
 
 

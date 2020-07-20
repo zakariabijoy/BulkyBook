@@ -35,6 +35,7 @@
                                     @if (User.IsInRole(SD.Role_Employee) || User.IsInRole(SD.Role_Admin))
                                     {
                                         <input asp-for="OrderHeader.Name" type="text" class="form-control" />
+                                        <span asp-validation-for="OrderHeader.Name" class="text-danger"></span>
                                     }
                                     else
                                     {
@@ -49,6 +50,7 @@
                                     @if (User.IsInRole(SD.Role_Employee) || User.IsInRole(SD.Role_Admin))
                                     {
                                         <input asp-for="OrderHeader.PhoneNumber" type="text" class="form-control" />
+                                        <span asp-validation-for="OrderHeader.PhoneNumber" class="text-danger"></span>
                                     }
                                     else
                                     {
@@ -62,6 +64,7 @@
                                     @if (User.IsInRole(SD.Role_Employee) || User.IsInRole(SD.Role_Admin))
                                     {
                                         <input asp-for="OrderHeader.StreetAddress" type="text" class="form-control" />
+                                        <span asp-validation-for="OrderHeader.StreetAddress" class="text-danger"></span>
                                     }
                                     else
                                     {
@@ -75,6 +78,7 @@
                                     @if (User.IsInRole(SD.Role_Employee) || User.IsInRole(SD.Role_Admin))
                                     {
                                         <input asp-for="OrderHeader.City" type="text" class="form-control" />
+                                        <span asp-validation-for="OrderHeader.City" class="text-danger"></span>
                                     }
                                     else
                                     {
@@ -88,6 +92,7 @@
                                     @if (User.IsInRole(SD.Role_Employee) || User.IsInRole(SD.Role_Admin))
                                     {
                                         <input asp-for="OrderHeader.State" type="text" class="form-control" />
+                                        <span asp-validation-for="OrderHeader.State" class="text-danger"></span>
                                     }
                                     else
                                     {
@@ -101,6 +106,7 @@
                                     @if (User.IsInRole(SD.Role_Employee) || User.IsInRole(SD.Role_Admin))
                                     {
                                         <input asp-for="OrderHeader.PostalCode" type="text" class="form-control" />
+                                        <span asp-validation-for="OrderHeader.PostalCode" class="text-danger"></span>
                                     }
                                     else
                                     {
@@ -114,6 +120,7 @@
                                     @if (User.IsInRole(SD.Role_Employee) || User.IsInRole(SD.Role_Admin))
                                     {
                                         <input asp-for="OrderHeader.ApplicationUser.Email" type="text" class="form-control" />
+                                        <span asp-validation-for="OrderHeader.ApplicationUser.Email" class="text-danger"></span>
                                     }
                                     else
                                     {
@@ -194,6 +201,11 @@
                                         <input asp-for="OrderHeader.PaymentStatus" type="text" readonly class="form-control" />
                                     </div>
                                 </div>
+                                @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+                                {
+                                    <input type="submit" value="Update Order Details" class="btn btn-warning form-control"
+                                           formaction="/Admin/Order/UpdateOrderDetails" formmethod="post" />
+                                }
                             }
                         </div>
                         <div class="col-12 col-lg-5 offset-lg-1">
@@ -291,6 +303,7 @@
 
 @section Scripts
 {
+    <partial name="_ValidationScriptsPartial" />
     <script>
         function validateInput() {
             var tracking = document.getElementById("trackingNumber").value;
