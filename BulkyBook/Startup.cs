@@ -44,6 +44,7 @@ namespace BulkyBook
             services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
             services.Configure<BrainTreeSettings>(Configuration.GetSection("BrainTree"));
             services.Configure<TwilioSettings>(Configuration.GetSection("Twilio"));
+            services.AddSingleton<IBrainTreeGate,BrainTreeGate>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
             services.AddRazorPages();
