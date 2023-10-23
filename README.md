@@ -1,4 +1,4 @@
-what is do in this project:
+Everything that has been done in this project:
 
 
 1. Integrate Identity Framework and  add more fields to Users
